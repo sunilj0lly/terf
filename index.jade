@@ -100,12 +100,12 @@ html
 
       function getLocation(location) {
           var coords = location.coords;
-          if (coords.accuracy < 10) {
+          if (coords.accuracy < 1000) {
             
             //debug info
             $('.js-info').show();
             $('.js-error').hide();
-            $('.js-position').text('lat: ' + coords.latitude + ', long: ' + coords.longitude + ', accuracy: ' + coords.accuracy);
+            $('.js-position').val('lat: ' + coords.latitude + ', long: ' + coords.longitude + ', accuracy: ' + coords.accuracy);
             var distanceToTentTop = getDistanceFromLatLonInM(coords.latitude, coords.longitude, tentTop.latitude, tentTop.longitude);
             $('.js-tent-top').text('distance from tent top: ' + Math.round(distanceToTentTop * 10)/10 + 'm.');
             var distanceToTentBottom = getDistanceFromLatLonInM(coords.latitude, coords.longitude, tentBottom.latitude, tentBottom.longitude);
@@ -157,7 +157,7 @@ html
 
   body
     .js-info
-      .js-position
+      input.js-position
       .js-tent-top
       .js-tent-bottom
     .js-error
