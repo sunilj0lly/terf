@@ -13,14 +13,14 @@ html
       });
 
       socket.on('announcement', function (msg) {
-        $('#lines').append($('<p>').append($('<em>').text(msg)));
+       // $('#lines').append($('<p>').append($('<em>').text(msg)));
       });
 
       socket.on('nicknames', function (nicknames) {
-        $('#nicknames').empty().append($('<span>Online: </span>'));
+       /* $('#nicknames').empty().append($('<span>Online: </span>'));
         for (var i in nicknames) {
           $('#nicknames').append($('<b>').text(nicknames[i]));
-        }
+        }*/
       });
 
       socket.on('user message', message);
@@ -157,7 +157,7 @@ html
 
   body
     .js-info
-      input.js-position
+      input.js-position(size=50)
       .js-tent-top
       .js-tent-bottom
     .js-error
