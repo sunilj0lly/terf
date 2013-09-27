@@ -38,7 +38,10 @@ html
       });
 
       function message (from, msg) {
-        $('#lines').append($('<p>').append($('<b>').text(from), msg));
+        if (msg.room == "") {
+          return;
+        }
+        $('#lines').append($('<p>').append($('<b>').text(from), msg.message));
       }
 
       // dom manipulation
@@ -51,14 +54,16 @@ html
             }
             $('#nickname-err').css('visibility', 'visible');
           });
+          ev.preventDefault();
           return false;
         });
 
-        $('#send-message').submit(function () {
-          message('me', $('#message').val());
-          socket.emit('user message', $('#message').val());
+        $('#send-message').submit(function (ev) {
+          message('me', { message: $('#message').val(), room: room });
+          socket.emit('user message', { message: $('#message').val(), room: room });
           clear();
           $('#lines').get(0).scrollTop = 10000000;
+          ev.preventDefault();
           return false;
         });
 
@@ -91,20 +96,40 @@ html
 
       navigator.geolocation.watchPosition(getLocation, onGeoError, geoOpts);
 
+      var room = "";
+
       function getLocation(location) {
           var coords = location.coords;
           if (coords.accuracy < 10) {
+            
+            //debug info
             $('.js-info').show();
             $('.js-error').hide();
             $('.js-position').text('lat: ' + coords.latitude + ', long: ' + coords.longitude + ', accuracy: ' + coords.accuracy);
             var distanceToTentTop = getDistanceFromLatLonInM(coords.latitude, coords.longitude, tentTop.latitude, tentTop.longitude);
             $('.js-tent-top').text('distance from tent top: ' + Math.round(distanceToTentTop * 10)/10 + 'm.');
             var distanceToTentBottom = getDistanceFromLatLonInM(coords.latitude, coords.longitude, tentBottom.latitude, tentBottom.longitude);
-            $('.js-tent-bottom').text('distance from tent bottom: ' + Math.round(distanceToTentBottom * 10)/10 + 'm.');     
+            $('.js-tent-bottom').text('distance from tent bottom: ' + Math.round(distanceToTentBottom * 10)/10 + 'm.');    
+
+            if (distanceToTentTop < 15) {
+              room = "tentTop";
+            } else if (distanceToTentBottom < 15) {
+              room = "tentBottom";
+            } else {
+              room = "";
+            }
+
           } else {
             $('.js-info').hide();
             $('.js-error').show();
             $('.js-accuracy').text('Accuracy to within ' + coords.accuracy + 'm.');
+            room = "";
+          }
+
+          if (room == "") {
+            $('.js-room').text("You're not in a room.");  
+          } else {
+            $('.js-room').text('My room: ' + room);  
           }
       }
 
@@ -138,6 +163,7 @@ html
     .js-error
       p Your location is not accurate enough.
       .js-accuracy
+    .js-room
 
     #chat
       #nickname
