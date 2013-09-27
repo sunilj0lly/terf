@@ -140,8 +140,10 @@ html
 
           if (room == "") {
             $('.js-room').text("You're not in a room.");  
+            $('#chat').fadeOut();
           } else {
-            $('.js-room').text('You are in ' + room);  
+            $('.js-room').text('You are in ' + room);
+            $('#chat').fadeIn();
           }
       }
 
