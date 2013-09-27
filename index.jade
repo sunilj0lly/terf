@@ -66,7 +66,79 @@ html
           $('#message').val('').focus();
         };
       });
+
+      var geoOpts = {
+        enableHighAccuracy: true,
+        timeout: 10 * 1000
+      };
+
+      var rooms = [];
+
+      var tentTop = {
+        name: "Tent",
+        latitude: 51.996022872675205,
+        longitude: -0.742152649909949
+      };
+
+      var tentBottom = {
+        name: "Tent Bottom",
+        latitude: 51.99612177913263,
+        longitude: -0.7421955652541874
+      }
+
+      rooms.push(tentTop);
+      rooms.push(tentBottom);
+
+      navigator.geolocation.watchPosition(getLocation, onGeoError, geoOpts);
+
+      function getLocation(location) {
+          var coords = location.coords;
+          if (coords.accuracy < 10) {
+            $('.js-info').show();
+            $('.js-error').hide();
+            $('.js-position').text('lat: ' + coords.latitude + ', long: ' + coords.longitude + ', accuracy: ' + coords.accuracy);
+            var distanceToTentTop = getDistanceFromLatLonInM(coords.latitude, coords.longitude, tentTop.latitude, tentTop.longitude);
+            $('.js-tent-top').text('distance from tent top: ' + Math.round(distanceToTentTop * 10)/10 + 'm.');
+            var distanceToTentBottom = getDistanceFromLatLonInM(coords.latitude, coords.longitude, tentBottom.latitude, tentBottom.longitude);
+            $('.js-tent-bottom').text('distance from tent bottom: ' + Math.round(distanceToTentBottom * 10)/10 + 'm.');     
+          } else {
+            $('.js-info').hide();
+            $('.js-error').show();
+            $('.js-accuracy').text('Accuracy to within ' + coords.accuracy + 'm.');
+          }
+      }
+
+      function onGeoError(error) {
+        console.log(error);
+      }
+
+      function getDistanceFromLatLonInM(lat1,lon1,lat2,lon2) {
+        var R = 6371; // Radius of the earth in km
+        var dLat = deg2rad(lat2-lat1);  // deg2rad below
+        var dLon = deg2rad(lon2-lon1); 
+        var a = 
+          Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+          Math.sin(dLon/2) * Math.sin(dLon/2)
+          ; 
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+        var d = R * c; // Distance in km
+        return d * 1000;
+      }
+
+      function deg2rad(deg) {
+        return deg * (Math.PI/180)
+      }
+
   body
+    .js-info
+      .js-position
+      .js-tent-top
+      .js-tent-bottpom
+    .js-error
+      p Your location is not accurate enough.
+      .js-accuracy
+
     #chat
       #nickname
         form.wrap#set-nickname
