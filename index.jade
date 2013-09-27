@@ -102,7 +102,7 @@ html
 
           var coords = location.coords;
 
-          var MIN_ACCURACY = 10;
+          var MIN_ACCURACY = 15;
           if (coords.accuracy < MIN_ACCURACY) {
             
             //debug info
@@ -151,7 +151,7 @@ html
 
       function getDistance(coords, target) {
         var distance = getDistanceFromLatLonInM(coords.latitude, coords.longitude, target.latitude, target.longitude);
-        return Math.round(distanceToTentBottom * 10)/10;
+        return Math.round(distance * 10)/10;
       }
 
       function getDistanceFromLatLonInM(lat1,lon1,lat2,lon2) {
