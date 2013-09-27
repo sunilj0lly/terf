@@ -119,12 +119,17 @@ html
             $('.js-tent-bottom').text('distance from tent bottom: ' + distanceToTentBottom + 'm.');    
 
             //select room
+            var roomDistance = 0;
             var MAX_DISTANCE_ROOM_CENTER = 15;
-            if (distanceToTentTop < MAX_DISTANCE_ROOM_CENTER) {
+            if (distanceToTentTop < distanceToTentBottom) {
               room = "tentTop";
-            } else if (distanceToTentBottom < MAX_DISTANCE_ROOM_CENTER) {
-              room = "tentBottom";
+              roomDistance = distanceToTentTop;
             } else {
+              room = "tentBottom";
+              roomDistance = distanceToTentBottom;
+            }
+
+            if (roomDistance > MAX_DISTANCE_ROOM_CENTER) {
               room = "";
             }
 
