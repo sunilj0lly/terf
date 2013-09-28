@@ -1,7 +1,6 @@
 doctype 5
 html
   head
-    link(href='/stylesheets/style.css', rel='stylesheet')
     script(src='http://code.jquery.com/jquery-1.6.1.min.js')
     script(src='/socket.io/socket.io.js')
 
@@ -17,6 +16,45 @@ html
 
     <link rel="stylesheet" href="CSS/normalize.css"/>
     style
+      #nickname,
+      #connecting {
+        position: absolute;
+        height: 410px;
+        z-index: 100;
+        left: 0;
+        top: 0;
+        background: #fff;
+        text-align: center;
+        width: 600px;
+        font: 15px Georgia;
+        color: #666;
+        display: block;
+      }
+      #nickname .wrap,
+      #connecting .wrap {
+        padding-top: 150px;
+      }
+      #nickname input {
+        border: 1px solid #ccc;
+        padding: 10px;
+      }
+      #nickname input:focus {
+        border-color: #999;
+        outline: 0;
+      }
+      #nickname #nickname-err {
+        color: #8b0000;
+        font-size: 12px;
+        visibility: hidden;
+      }
+      .connected #connecting {
+        display: none;
+      }
+      .nickname-set #nickname {
+        display: none;
+      }
+
+
       *{
         box-sizing: border-box;
       }
@@ -176,16 +214,25 @@ html
         if (msg.room == "") {
           return;
         }
-        $('#lines').append($('<p>').append($('<b>').text(from), msg.message));
+        var $chatItem = $('.chat-item:last').clone();
+        $chatItem.find('.speech p').text(msg.message);
+        $('#lines').prepend($chatItem);
+        $chatItem.hide().fadeIn('slow');
+        //$('#lines').append($('<p>').append($('<b>').text(from), msg.message));
       }
 
       // dom manipulation
       $(function () {
+
+        //hack!
+        $('.chat-item').hide();//hide chat template item
+
         $('#set-nickname').submit(function (ev) {
           socket.emit('nickname', $('#nick').val(), function (set) {
             if (!set) {
               clear();
-              return $('#chat').addClass('nickname-set');
+              $('#nickname').hide();
+              return;// $('#chat').addClass('nickname-set');
             }
             $('#nickname-err').css('visibility', 'visible');
           });
@@ -316,18 +363,18 @@ html
       }
 
   body
+    #nickname
+      form.wrap#set-nickname
+        p Please type in your nickname and press enter.
+        input#nick
+        p#nickname-err Nickname already in use
+      #connecting
+        .wrap Connecting to socket.io server
     section.header
       h1.js-room Terf
     section.article
       #chat
         ul.chat-list.js-chat#lines
-          #nickname
-            form.wrap#set-nickname
-              p Please type in your nickname and press enter.
-              input#nick
-              p#nickname-err Nickname already in use
-            #connecting
-              .wrap Connecting to socket.io server
           li.chat-item
             .item-left
               .profile-pic
