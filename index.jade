@@ -155,6 +155,7 @@ html
         position: relative;
         padding: 5px;
         margin:5px;
+        min-height: 49px;
         background: #bdc3c7;
         -webkit-border-radius: 4px;
         -moz-border-radius: 4px;
@@ -285,7 +286,7 @@ html
 
           var coords = location.coords;
 
-          var MIN_ACCURACY = 1500;
+          var MIN_ACCURACY = 15;
           if (coords.accuracy < MIN_ACCURACY) {
             
             //debug info
@@ -303,7 +304,7 @@ html
 
             //select room
             var roomDistance = 0;
-            var MAX_DISTANCE_ROOM_CENTER = 1500;
+            var MAX_DISTANCE_ROOM_CENTER = 15;
             if (distanceToTentTop < distanceToTentBottom) {
               room = "Tent (Stage)";
               roomDistance = distanceToTentTop;
@@ -313,6 +314,7 @@ html
             }
 
             if (roomDistance > MAX_DISTANCE_ROOM_CENTER) {
+              alert("Your location accuracy is too low. (Yours: " + coords.accuracy + ", required: " + MAX_DISTANCE_ROOM_CENTER);
               room = "";
             }
 
