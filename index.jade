@@ -314,7 +314,6 @@ html
             }
 
             if (roomDistance > MAX_DISTANCE_ROOM_CENTER) {
-              alert("Your location accuracy is too low. (Yours: " + coords.accuracy + ", required: " + MAX_DISTANCE_ROOM_CENTER);
               room = "";
             }
 
@@ -323,7 +322,8 @@ html
             //debug
             //$('.js-info').hide();
             //$('.js-error').show();
-            $('.js-accuracy').text('Accuracy must be ' + MIN_ACCURACY + 'm, your accuracy is ' + coords.accuracy + 'm.');
+            alert("Your location accuracy is too low. (Yours: " + coords.accuracy + ", required: " + MIN_ACCURACY);
+            //$('.js-accuracy').text('Accuracy must be ' + MIN_ACCURACY + 'm, your accuracy is ' + coords.accuracy + 'm.');
             
             room = "";
           }
