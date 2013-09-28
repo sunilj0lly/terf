@@ -4,12 +4,147 @@ html
     link(href='/stylesheets/style.css', rel='stylesheet')
     script(src='http://code.jquery.com/jquery-1.6.1.min.js')
     script(src='/socket.io/socket.io.js')
+
+    <meta name="viewport" content="user-scalable= no, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" href="apple-touch-icon-57x57.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="apple-touch-icon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114.png" />
+    <link rel="apple-touch-startup-image" href="apple-touch-startup-image-320x460.png" />
+    <link rel="apple-touch-startup-image" sizes="768x1004" href="apple-touch-startup-image-768x1004.png" />
+    <link href='http://fonts.googleapis.com/css?family=Lato:100,300,400,700' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="CSS/normalize.css"/>
+    style
+      *{
+        box-sizing: border-box;
+      }
+      h1,p{
+        font-family: 'Lato', sans-serif;
+      }
+      .header{
+        background: #10e242;
+        height:3.5em;
+        border-bottom: #0ace26 3px solid;
+      }
+      
+      .header h1{
+        color: white;
+        text-align: center;
+        font-size: 23px;
+        margin: 0;
+        padding-top:13px;
+      }
+      .article{
+        height: 27.3em;
+        overflow: scroll;
+        -webkit-overflow-scrolling: touch;
+      }
+      .chat-bar{}
+      .inputFlex{
+        display: flex;
+        background: #ecf0f1;
+        border: 0;
+        border-top: #ddd 3px solid;
+      }
+      input[type=text]{
+        border: 0;
+        height: 40px;
+        width:13em;
+        font-family: 'Lato', sans-serif;
+
+      }
+      input[type=submit]{
+        border: 0;
+        background: #3498db;
+        color: white;
+        font-family: 'Lato', sans-serif;
+        height:40px;
+        width:4.5em;
+        font-size: 18px;
+        text-align: center;
+        border-radius:2px;
+      }
+      .input-text{
+            
+      }
+      .input-submit{}
+      .chat-list{
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .chat-item{
+        border-bottom: 1px rgb(221, 221, 221) solid;
+        display: flex;
+        display: -webkit-flex;
+        -webkit-box-align: flex-start;
+        align-items: flex-start;
+        height: 90px;
+      
+      }
+      .item-left{
+      }
+      .profile-pic{
+        width: 60px;
+        height: 60px;
+        overflow: hidden;
+        border-radius: 40px;
+        margin: 10px;
+        display: block;
+      }
+      .item-right{
+        flex:1;
+        -webkit-box-flex:1;
+        border-left: 3px rgb(221, 221, 221) solid;
+        height: 100%;
+        width:250px;
+        padding-left: 15px; 
+      }
+      .speech:before{
+        content: "";
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: rgb(44, 62, 80);
+        border-radius: 10px;
+        left: -29px;
+        top: 32px;
+        border: 3px solid rgb(255, 255, 255);
+          }
+      .speech{
+        position: relative;
+        padding: 5px;
+        margin:5px;
+        background: #bdc3c7;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 10px;
+      }
+      .speech:after{
+        content: '';
+        position: absolute;
+        border-style: solid;
+        border-width: 11px 13px 11px 0;
+        border-color: transparent #bdc3c7;
+        display: block;
+        width: 0;
+        z-index: 1;
+        left: -13px;
+        top: 29px;
+      }
+      .speech p{
+        font-size: 12px;
+        padding: 0 3px 0 3px;
+      }
+
     script
       // socket.io specific code
       var socket = io.connect();
 
       socket.on('connect', function () {
-        $('#chat').addClass('connected');
+        $('#connecting').addClass('connected').hide();
       });
 
       socket.on('announcement', function (msg) {
@@ -59,6 +194,7 @@ html
         });
 
         $('#send-message').submit(function (ev) {
+          console.log('send');
           message('me', { message: $('#message').val(), room: room });
           socket.emit('user message', { message: $('#message').val(), room: room });
           clear();
@@ -102,30 +238,30 @@ html
 
           var coords = location.coords;
 
-          var MIN_ACCURACY = 15;
+          var MIN_ACCURACY = 1500;
           if (coords.accuracy < MIN_ACCURACY) {
             
             //debug info
-            $('.js-info').show();
-            $('.js-error').hide();
-            $('.js-position').val('lat: ' + coords.latitude + ', long: ' + coords.longitude + ', accuracy: ' + coords.accuracy);
+           // $('.js-info').show();
+            //$('.js-error').hide();
+            //$('.js-position').val('lat: ' + coords.latitude + ', long: ' + coords.longitude + ', accuracy: ' + coords.accuracy);
             
             //calculate distances
             var distanceToTentTop = getDistance(coords, tentTop);
             var distanceToTentBottom = getDistance(coords, tentBottom);
 
             //debug
-            $('.js-tent-top').text('distance from tent top: ' + distanceToTentTop + 'm.');
-            $('.js-tent-bottom').text('distance from tent bottom: ' + distanceToTentBottom + 'm.');    
+           // $('.js-tent-top').text('distance from tent top: ' + distanceToTentTop + 'm.');
+            //$('.js-tent-bottom').text('distance from tent bottom: ' + distanceToTentBottom + 'm.');    
 
             //select room
             var roomDistance = 0;
-            var MAX_DISTANCE_ROOM_CENTER = 15;
+            var MAX_DISTANCE_ROOM_CENTER = 1500;
             if (distanceToTentTop < distanceToTentBottom) {
-              room = "tentTop";
+              room = "Tent (Stage)";
               roomDistance = distanceToTentTop;
             } else {
-              room = "tentBottom";
+              room = "Tent (Entrance)";
               roomDistance = distanceToTentBottom;
             }
 
@@ -136,19 +272,19 @@ html
           } else {
 
             //debug
-            $('.js-info').hide();
-            $('.js-error').show();
+            //$('.js-info').hide();
+            //$('.js-error').show();
             $('.js-accuracy').text('Accuracy must be ' + MIN_ACCURACY + 'm, your accuracy is ' + coords.accuracy + 'm.');
             
             room = "";
           }
 
           if (room == "") {
-            $('.js-room').text("You're not in a room.");  
-            $('#chat').fadeOut();
+            $('.js-room').text("No room");  
+            $('.js-chat').fadeOut();
           } else {
-            $('.js-room').text('You are in ' + room);
-            $('#chat').fadeIn();
+            $('.js-room').text(room);
+            $('.js-chat').fadeIn();
           }
       }
 
@@ -180,26 +316,27 @@ html
       }
 
   body
-    .js-info
-      input.js-position(size=50)
-      .js-tent-top
-      .js-tent-bottom
-    .js-error
-      p Your location is not accurate enough.
-      .js-accuracy
-    .js-room
-
-    #chat
-      #nickname
-        form.wrap#set-nickname
-          p Please type in your nickname and press enter.
-          input#nick
-          p#nickname-err Nickname already in use
-      #connecting
-        .wrap Connecting to socket.io server
-      #messages
-        #nicknames
-        #lines
-      form#send-message
-        input#message
-        button Send
+    section.header
+      h1.js-room Terf
+    section.article
+      #chat
+        ul.chat-list.js-chat#lines
+          #nickname
+            form.wrap#set-nickname
+              p Please type in your nickname and press enter.
+              input#nick
+              p#nickname-err Nickname already in use
+            #connecting
+              .wrap Connecting to socket.io server
+          li.chat-item
+            .item-left
+              .profile-pic
+                img(height=150,width=150,src="http://images2.nick.com/nicktoons-assets/shows/images/ren-stimpy/characters/character_stimpy.jpg?height=363&width=332&quality=0.75")
+            .item-right
+              .speech
+                p Getting chatting!
+      section.chat-bar
+        form#send-message
+          fieldset.inputFlex
+            input.input-text(id="message",name="chat-field", placeholder="Write a message...")
+            input.input-submit(type="submit",value="send")
